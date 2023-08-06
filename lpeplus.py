@@ -32,6 +32,7 @@ def skipEmptyRow(df, repl):
 
 template = pd.read_excel('lpeplus_template.xlsx')
 replacement = pd.read_excel('lpe_replace.xlsx')
+replacementLen = len(list(replacement.columns.values))
 folders = [x for x in filter(os.path.isdir, os.listdir(os.getcwd()))]#change to the actual folders
 #folders = ['try','try2']
 pujkName = ''
