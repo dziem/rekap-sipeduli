@@ -6,13 +6,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=UserWarning)
 
 '''
-progress:
-poc using try and try2 folders success
-1. read _lpe
-2. rean non _lpe (skip lpi, lri)
-3. error notes
-start 15.49 - 16.22
-16.45 - 17.16
+start
 
 Error notes:
 1. error: expected <class 'openpyxl.worksheet.cell_range.MultiCellRange'>
@@ -30,8 +24,8 @@ def skipEmptyRow(df, repl):
             break
     return df
 
-template = pd.read_excel('lpeplus_template.xlsx')
-replacement = pd.read_excel('lpe_replace.xlsx')
+template = pd.read_excel('lreplus_template.xlsx')
+replacement = pd.read_excel('lre_replace.xlsx')
 replacementLen = len(list(replacement.columns.values))
 folders = [x for x in filter(os.path.isdir, os.listdir(os.getcwd()))]#change to the actual folders
 #folders = ['try','try2']
@@ -54,20 +48,20 @@ for folder in folders:
         tanggalLapor = sub[-19:]
         for file in files:
             print('--'+file)
-            if ('_lpe' in file and '.xls' not in file):
+            if ('_lre' in file and '.xls' not in file):
                 notes.append(folder + '\\' + sub + '\\' + file + ' -> non .xls file format')
             if ('.zip' in file or '.rar' in file):
                 notes.append(folder + '\\' + sub + '\\' + file + ' -> file is compressed in zip/rar')
             if ('.xls' in file):
-                pos = file.lower().find('_lpe')
+                pos = file.lower().find('_lre')
                 if (pos != -1):
                     try:
                         data = pd.read_excel(file, sheet_name=None)
-                        if 'REALISASI' in data.keys():
+                        if 'RENCANA' in data.keys():
                             fileFiltered = file[:pos]
                             pujkName = fileFiltered.replace('_',' ')
                             namaFile = 'LPE'
-                            realisasi = data['REALISASI']
+                            realisasi = data['RENCANA']
                             thisColumns = list(realisasi.columns.values)
                             if (thisColumns[0] != 'No.'):
                                 realisasi = skipEmptyRow(realisasi, replacement)
@@ -84,7 +78,7 @@ for folder in folders:
                             if (rows > 0):
                                 thisColumns = list(allData.columns.values)
                                 if (not np.array_equal(validationColumns, thisColumns)):
-                                    notes.append(folder + '\\' + sub + '\\' + file + ' -> REALISASI wrong column format')
+                                    notes.append(folder + '\\' + sub + '\\' + file + ' -> RENCANA wrong column format')
                                 else:
                                     for i in range(0, rows):
                                         count += 1
@@ -97,9 +91,9 @@ for folder in folders:
                                         allData.loc[rowIndex,'Nama File'] = namaFile
                                     template = pd.concat([template, allData])
                             else:
-                                notes.append(folder + '\\' + sub + '\\' + file + ' -> REALISASI sheet empty')
+                                notes.append(folder + '\\' + sub + '\\' + file + ' -> RENCANA sheet empty')
                         else:
-                            notes.append(folder + '\\' + sub + '\\' + file + ' -> REALISASI sheet does not exist')
+                            notes.append(folder + '\\' + sub + '\\' + file + ' -> RENCANA sheet does not exist')
                     except Exception as e:
                         notes.append(folder + '\\' + sub + '\\' + file + ' -> error: ' + str(e))
                 else:
@@ -108,13 +102,13 @@ for folder in folders:
                         lpi = file.lower().find('_lpi')
                         if (lri == -1 and lpi == -1):
                             data = pd.read_excel(file, sheet_name=None)
-                            pos = file.lower().find('_lre')
+                            pos = file.lower().find('_lpe')
                             if (pos != -1):
-                                namaFile = 'LRE'
+                                namaFile = 'LPE'
                             else:
                                 namaFile = 'Other'
-                            if 'REALISASI' in data.keys():
-                                realisasi = data['REALISASI']
+                            if 'RENCANA' in data.keys():
+                                realisasi = data['RENCANA']
                                 pujkName = sub[:-19]
                                 thisColumns = list(realisasi.columns.values)
                                 if (thisColumns[0] != 'No.'):
@@ -132,7 +126,7 @@ for folder in folders:
                                 if (rows > 0):
                                     thisColumns = list(allData.columns.values)
                                     if (not np.array_equal(validationColumns, thisColumns)):
-                                        notes.append(folder + '\\' + sub + '\\' + file + ' -> REALISASI wrong column format')
+                                        notes.append(folder + '\\' + sub + '\\' + file + ' -> RENCANA wrong column format')
                                     else:
                                         for i in range(0, rows):
                                             count += 1
@@ -145,15 +139,15 @@ for folder in folders:
                                             allData.loc[rowIndex,'Nama File'] = namaFile
                                         template = pd.concat([template, allData])                                
                                 else:
-                                    notes.append(folder + '\\' + sub + '\\' + file + ' -> REALISASI sheet empty')
+                                    notes.append(folder + '\\' + sub + '\\' + file + ' -> RENCANA sheet empty')
                     except Exception as e:
                         notes.append(folder + '\\' + sub + '\\' + file + ' -> error: ' + str(e))
         os.chdir('..')
     os.chdir('..')
 print('Done reading...')
 print('Exporting...')
-template.to_excel("LPE Plus Result.xlsx", index=False) 
-with open("LPE Plus Mistake Notes.txt", "w") as txt_file:
+template.to_excel("LRE Plus Result.xlsx", index=False) 
+with open("LRE Plus Mistake Notes.txt", "w") as txt_file:
     for line in notes:
         txt_file.write(line)
         txt_file.write("\n")
