@@ -229,10 +229,25 @@ def validation(edukasi, infra, inisiatif):
             checkInfra.append(False)
     results = False
     lastTW = False
+    resultsAll = []
+    results = True
+    for i in range(len(checkEdu) - 1):
+        if (checkEdu[i] or checkInfra[i]):
+            resultsAll.append(True)
+            lastTW = True
+        else:
+            resultsAll.append(False)
+            lastTW = False
+    for i in resultsAll:
+        results = results and i
+    '''
     for i in range(len(checkEdu) - 1):
         if (checkEdu[i] or checkInfra[i]):
             if ((i + 1) % 2 == 0):
-                results = lastTW or True
+                if ((i + 1) == 2):
+                    results = lastTW and True
+                else:
+                    results = lastTW or True
                 lastTW = False
             else:
                 lastTW = True
@@ -241,9 +256,13 @@ def validation(edukasi, infra, inisiatif):
             if (i != 2):
                 results = False
             if ((i + 1) % 2 == 0):
-                results = lastTW or False
+                if ((i + 1) == 2):
+                    results = lastTW and False
+                else:
+                    results = lastTW or False
                 if (results == False):
                     break
+    '''
     if (len(checkEdu) == 1):
         results = checkEdu[0] or checkInfra[0]
     if (results):
