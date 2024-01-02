@@ -121,12 +121,16 @@ def getPeriode(fileName, date, sektor):
     if (('semesterii' in fileName.lower())
     or ('semester2' in fileName.lower())
     or ('smtii' in fileName.lower())
-    or ('smt2' in fileName.lower())):
+    or ('smt2' in fileName.lower())
+    or ('smii' in fileName.lower())
+    or ('sm2' in fileName.lower())):
         return 'SMT2'
     if (('semesteri' in fileName.lower())
     or ('semester1' in fileName.lower())
     or ('smti' in fileName.lower())
-    or ('smt1' in fileName.lower())):
+    or ('smt1' in fileName.lower())
+    or ('smi' in fileName.lower())
+    or ('sm1' in fileName.lower())):
         return 'SMT1'
     if (('tahun2023' in fileName.lower())
     or ('th2023' in fileName.lower())):
