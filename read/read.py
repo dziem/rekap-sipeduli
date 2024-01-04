@@ -5,6 +5,7 @@ import warnings
 import dateutil.parser
 from datetime import datetime
 import editdistance
+import re
 
 warnings.simplefilter(action='ignore', category=UserWarning)
 
@@ -97,7 +98,9 @@ for folder in folders:
         os.chdir(sub)
         files = os.listdir()
         print('-'+sub)
-        tanggalLapor = sub[-19:]
+        regex = '\d{2}-\d{2}-\d{4} \d{2}-\d{2}-\d{2}'
+        match = re.search(regex, sub)
+        tanggalLapor = match.group()
         for file in files:
             print('--'+file)
             if (fileFormatName in file and '.xls' not in file):
@@ -180,7 +183,9 @@ for folder in folders:
                             if (sheetFormatName in data.keys()) or (fileRead in ['LRI', 'LPI']):
                                 if (fileRead in ['LRE', 'LPE']):
                                     data = data[sheetFormatName]
-                                pujkName = sub[:-19]
+                                rr = '^[^\d{2}]*'
+                                pujkName = re.search(rr, sub).group(0)
+                                #pujkName = sub[:-19]
                                 thisColumns = list(data.columns.values)
                                 if (thisColumns[0] != 'No.'):
                                     data = skipEmptyRow(data, replacement)
@@ -315,7 +320,8 @@ for i in range(0, rows):
     namaPUJKFix = 'bup'
     rowIndex = data.index[i]
     namaPUJK = data.loc[rowIndex,'Nama PUJK Pelapor']
-    namaFolder = data.loc[rowIndex,'Nama File Excel'].split('\\')[0][:-19].strip()
+    namaFolder = data.loc[rowIndex,'Nama File Excel'].split('\\')[0].strip()
+    namaFolder = re.search(rr, namaFolder).group(0)
     masterFix = mastertoo[mastertoo['Nama_PUJK'] == namaFolder.lower()]
     if (not masterFix.empty):
         namaPUJKFix = masterFix['Nama_Fix'].iloc[0]
