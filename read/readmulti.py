@@ -318,10 +318,10 @@ if __name__=="__main__":
         timestampData = masterTimestamp[masterTimestamp['Waktu_Diterima'] == timestamp]
         namaPUJK = data.loc[rowIndex,'Nama PUJK Pelapor']
         sektorPUJK = 'Tanggal Lapor Not Found'
-        if (len(timestampData.index) > 0):
+        if (len(timestampData.index) == 1):
             namaPUJK = timestampData['Nama_Fix'].iloc[0]
             sektorData = masterSektor[masterSektor['Nama PUJK'] == namaPUJK]
-            if (len(sektorData.index) > 0):
+            if (len(sektorData.index) == 1):
                 sektorPUJK = sektorData['Nama Sektor'].iloc[0]
         data.at[i, 'Nama PUJK Pelapor'] = namaPUJK
         data.at[i, 'Nama Sektor Pelapor'] = sektorPUJK
