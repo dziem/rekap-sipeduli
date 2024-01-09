@@ -242,8 +242,11 @@ def validation(edukasi, infra, inisiatif):
         else:
             resultsAll.append(False)
             lastTW = False
-    for i in resultsAll:
-        results = results and i
+    if (len(resultsAll) > 2):
+        results = resultsAll[0] or resultsAll[1]
+    else:
+        for i in resultsAll:
+            results = results and i
     '''
     for i in range(len(checkEdu) - 1):
         if (checkEdu[i] or checkInfra[i]):
@@ -272,7 +275,7 @@ def validation(edukasi, infra, inisiatif):
     if (results):
         if (validEdu):
             if (len(checkEdu) > 2):
-                if (inisiatif == 'Valid' and (lastEdu or lastInfra or lastTW)):
+                if (inisiatif == 'Valid' and (resultsAll[2] or (lastEdu or lastInfra))):
                     return 'Valid'
             else:
                 if (inisiatif == 'Valid' and (lastEdu or lastInfra)):
@@ -292,7 +295,7 @@ template = pd.read_excel('lpelite_template.xlsx', na_filter=False)
 data = pd.read_excel('LPE Result Final.xlsx', na_filter=False)
 count = 0
 rows = len(data.index)
-#rows = 100
+#rows = 10
 for i in range(0, rows):
     rowIndex = data.index[i]
     namaPUJK = data.loc[rowIndex,'Nama PUJK Pelapor']
