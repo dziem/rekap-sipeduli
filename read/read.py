@@ -275,6 +275,23 @@ def searchSektor(name):
         return sektor[z]
     else:
         return 'N/A'
+        
+def searchNama(name):
+    mins = 99999
+    correctName = ''
+    z = -1
+    x = -1
+    for j in pujk:
+        x = x + 1
+        newMins = editdistance.eval(name.lower().strip(), j.lower())
+        if (newMins < mins):
+            mins = newMins
+            correctName = j 
+            z = x
+    if (mins < 6):
+        return pujk[z]
+    else:
+        return 'N/A'
 
 def getSektor(name):
     i = name.lower().find('bpd')
@@ -321,9 +338,11 @@ for i in range(0, rows):
     rowIndex = data.index[i]
     namaPUJK = data.loc[rowIndex,'Nama PUJK Pelapor']
     namaFolder = data.loc[rowIndex,'Nama File Excel'].split('\\')[0].strip()
+    rr = '^[^\d{2}]*'
     nama1 = re.search(rr, namaFolder).group(0)
     rrr = '(?<=\d{2}-\d{2}-\d{4} \d{2}-\d{2}-\d{2}).*$'
     nama2 = re.search(rrr, namaFolder).group(0).strip()
+    newName = namaPUJK
     masterFix = mastertoo[mastertoo['Nama_PUJK'] == nama1.lower()]
     if (not masterFix.empty):
         namaPUJKFix = masterFix['Nama_Fix'].iloc[0]
@@ -335,7 +354,7 @@ for i in range(0, rows):
             masterFix = mastertoo[mastertoo['Email_Pengirim'] == nama1.lower()]
             if (not masterFix.empty):
                 namaPUJKFix = masterFix['Nama_Fix'].iloc[0]
-    if namaPUJKFix == 'bup':
+    if namaPUJKFix == 'bup' and nama2 != '':
         masterFix = mastertoo[mastertoo['Nama_Pengirim'] == nama2.lower()]
         if (not masterFix.empty):
             namaPUJKFix = masterFix['Nama_Fix'].iloc[0]
@@ -344,7 +363,10 @@ for i in range(0, rows):
             if (not masterFix.empty):
                 namaPUJKFix = masterFix['Nama_Fix'].iloc[0]
     if (namaPUJKFix != 'bup'):
-        data.at[i, 'Nama PUJK Pelapor'] = namaPUJKFix
+        newName = namaPUJKFix
+    newName = searchNama(newName)
+    if (newName != 'N/A'):
+        data.at[i, 'Nama PUJK Pelapor'] = newName
         
 #3. Get Sektor
 rows = len(data.index)
