@@ -321,18 +321,28 @@ for i in range(0, rows):
     rowIndex = data.index[i]
     namaPUJK = data.loc[rowIndex,'Nama PUJK Pelapor']
     namaFolder = data.loc[rowIndex,'Nama File Excel'].split('\\')[0].strip()
-    namaFolder = re.search(rr, namaFolder).group(0)
-    masterFix = mastertoo[mastertoo['Nama_PUJK'] == namaFolder.lower()]
+    nama1 = re.search(rr, namaFolder).group(0)
+    rrr = '(?<=\d{2}-\d{2}-\d{4} \d{2}-\d{2}-\d{2}).*$'
+    nama2 = re.search(rrr, namaFolder).group(0).strip()
+    masterFix = mastertoo[mastertoo['Nama_PUJK'] == nama1.lower()]
     if (not masterFix.empty):
         namaPUJKFix = masterFix['Nama_Fix'].iloc[0]
     else:
-        masterFix = mastertoo[mastertoo['Nama_PUJK'] == namaFolder.lower()]
+        masterFix = mastertoo[mastertoo['Nama_Pengirim'] == nama1.lower()]
         if (not masterFix.empty):
-            namaPUJKFix = masterFix['Nama_Pengirim'].iloc[0]
+            namaPUJKFix = masterFix['Nama_Fix'].iloc[0]
         else:
-            masterFix = mastertoo[mastertoo['Email_Pengirim'] == namaFolder.lower()]
+            masterFix = mastertoo[mastertoo['Email_Pengirim'] == nama1.lower()]
             if (not masterFix.empty):
-                namaPUJKFix = masterFix['Nama_PUJK'].iloc[0]
+                namaPUJKFix = masterFix['Nama_Fix'].iloc[0]
+    if namaPUJKFix == 'bup':
+        masterFix = mastertoo[mastertoo['Nama_Pengirim'] == nama2.lower()]
+        if (not masterFix.empty):
+            namaPUJKFix = masterFix['Nama_Fix'].iloc[0]
+        else:
+            masterFix = mastertoo[mastertoo['Email_Pengirim'] == nama2.lower()]
+            if (not masterFix.empty):
+                namaPUJKFix = masterFix['Nama_Fix'].iloc[0]
     if (namaPUJKFix != 'bup'):
         data.at[i, 'Nama PUJK Pelapor'] = namaPUJKFix
         
